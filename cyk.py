@@ -108,6 +108,7 @@ class CYK:
                 qtd_cadeias -= 1                                                                                    # Atualizando quantidade de cadeias
 
                 cadeia = self.cadeias[index_cadeias].split()                                                        # Lista contendo os simbolos da cadeia
+                tam_cadeia = len(cadeia)
                 print(f'\ncadeia: {cadeia}')
 
                 """
@@ -115,19 +116,30 @@ class CYK:
                 se a substituicao faz parte do conjunto de regras
                 """
 
-                if ('&' in cadeia) and (len(cadeia) == 1):
+                if ('&' in cadeia) and (tam_cadeia == 1):
                     if (self.busca(regras=regras_de_substituicao, terminal='&')):
                         print('cadeia aceita')
-                
-                else:
-                    tabela = self.criar_tabela(len(cadeia))                                                         # Tabela contendo os resultados do algoritmo
 
-                    for i in range(len(cadeia)):
+                else:
+                    tabela = self.criar_tabela(tam_cadeia)                                                         # Tabela contendo os resultados do algoritmo
+
+                    for i in range(tam_cadeia):
                         for variavel in variaveis:
                             if (self.busca(regras_de_substituicao, variavel, cadeia[i])):
                                 tabela[i][i].append(variavel)
 
+                    for l in range(1, tam_cadeia):
+                        for i in range(tam_cadeia - l + 1):
+                            j = i + l - 1
+                            
+                            for k in range(j - 1):
+                                for regra in regras_de_substituicao.values():
+                                    print(regra)
+                                    pass
+                    
                     print(tabela)
+
+
 
             index_especs += qtd_regras + 3                                                                          # Atualizando indice
             index_variaveis += qtd_regras + 3                                                                       # Atualizando indice
