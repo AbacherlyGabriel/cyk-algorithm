@@ -34,6 +34,21 @@ class CYK:
         return regras_de_substituicao
 
     """
+    Inicializacao da tabela de resultados dado o tamanho da cadeia de teste
+    """
+
+    def criar_tabela(self, tam_cadeia):
+        tabela = []
+
+        for i in range(tam_cadeia):
+            tabela.append([])
+
+            for j in range(tam_cadeia):
+                tabela[i].append([])
+
+        return tabela
+
+    """
     Busca por regras especificadas no parametro da funcao
     """
 
@@ -93,7 +108,6 @@ class CYK:
                 qtd_cadeias -= 1                                                                                    # Atualizando quantidade de cadeias
 
                 cadeia = self.cadeias[index_cadeias].split()                                                        # Lista contendo os simbolos da cadeia
-
                 print(f'\ncadeia: {cadeia}')
 
                 """
@@ -106,10 +120,14 @@ class CYK:
                         print('cadeia aceita')
                 
                 else:
+                    tabela = self.criar_tabela(len(cadeia))                                                         # Tabela contendo os resultados do algoritmo
+
                     for i in range(len(cadeia)):
                         for variavel in variaveis:
                             if (self.busca(regras_de_substituicao, variavel, cadeia[i])):
-                                print(variavel, cadeia[i])
+                                tabela[i][i].append(variavel)
+
+                    print(tabela)
 
             index_especs += qtd_regras + 3                                                                          # Atualizando indice
             index_variaveis += qtd_regras + 3                                                                       # Atualizando indice
