@@ -1,5 +1,6 @@
 from Input import FileReader
 
+
 """
 Implementacao do algoritmo CYK para Gramaticas Livres do Contexto
 """
@@ -34,6 +35,8 @@ class CYK:
             regras = self.gramaticas[index_regras:index_regras + qtd_regras]                                        # Regras das GLCs
 
             index_especs += qtd_regras + 3                                                                          # Atualizando indice
+            index_variaveis += qtd_regras + 3                                                                       # Atualizando indice
+            index_terminais += qtd_regras + 3                                                                       # Atualizando indice
             index_regras += qtd_regras + 3                                                                          # Atualizando indice
 
             print(f'\nglc {glc}')
