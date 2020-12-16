@@ -30,8 +30,9 @@ class CYK:
             
             regras_de_substituicao[variavel].append(substituicoes)
 
-        #variavel_inicial = list(regras_de_substituicao.keys())[0]
-        return regras_de_substituicao
+        variavel_inicial = list(regras_de_substituicao.keys())[0]
+
+        return regras_de_substituicao, variavel_inicial
 
     """
     Inicializacao da tabela de resultados dado o tamanho da cadeia de teste
@@ -52,8 +53,8 @@ class CYK:
     Busca por regras especificadas no parametro da funcao
     """
 
-    def busca(self, regras=None, variavel=None, terminal=None):
-        if (regras is not None) and (terminal is not None):
+    def busca(self, regras=None, variavel=None, simbolo=None):
+        if (regras is not None) and (simbolo is not None):
             substituicoes = regras.values()
             
             if (variavel is not None):
@@ -61,11 +62,21 @@ class CYK:
 
             for lista_substituicoes in substituicoes:
                 for substituicao in lista_substituicoes:
-                    if terminal in substituicao:
+                    if simbolo in substituicao:
                         return True
 
         return False
 
+    """
+    Exibindo tabela
+    """
+
+    def print_tabela(self, tabela):
+        for row in range(len(tabela)):
+            for col in range(len(tabela[row])):
+                print(tabela[row][col], end=' ')
+            print()
+        
     """
     Implementacao do Algoritmo CYK
     """
@@ -86,7 +97,7 @@ class CYK:
             terminais = self.gramaticas[index_terminais].split()                                                    # Terminais das GLCs
             regras = self.gramaticas[index_regras:index_regras + qtd_regras]                                        # Regras das GLCs
 
-            regras_de_substituicao = self.regras_to_dict(variaveis, regras)                                         # Conversao da lista de regras em um dicionario
+            regras_de_substituicao, variavel_inicial = self.regras_to_dict(variaveis, regras)                       # Conversao da lista de regras em um dicionario
 
             qtd_cadeias = int(self.cadeias[index_cadeias])                                                          # Quantidade de cadeias de teste
 
@@ -97,7 +108,7 @@ class CYK:
             print(f'\nvariaveis: {variaveis}')
             print(f'terminais: {terminais}')
             print(f'regras: {regras_de_substituicao}')
-            #print(f'variavel inicial: {variavel_inicial}\n')
+            print(f'variavel inicial: {variavel_inicial}')
 
             """
             Leitura das cadeias de teste e execucao do algoritmo
@@ -117,8 +128,10 @@ class CYK:
                 """
 
                 if ('&' in cadeia) and (tam_cadeia == 1):
-                    if (self.busca(regras=regras_de_substituicao, terminal='&')):
+                    if (self.busca(regras=regras_de_substituicao, simbolo='&')):
                         print('cadeia aceita')
+                    else:
+                        print('cadeia nao aceita')
 
                 else:
                     tabela = self.criar_tabela(tam_cadeia)                                                         # Tabela contendo os resultados do algoritmo
@@ -128,18 +141,31 @@ class CYK:
                             if (self.busca(regras_de_substituicao, variavel, cadeia[i])):
                                 tabela[i][i].append(variavel)
 
-                    for l in range(1, tam_cadeia):
-                        for i in range(tam_cadeia - l + 1):
-                            j = i + l - 1
+                    for tam_substring in range(2, tam_cadeia + 1):
+                        for start in range(tam_cadeia - tam_substring + 1):
+                            end = start + tam_substring - 1
                             
-                            for k in range(j - 1):
-                                for regra in regras_de_substituicao.values():
-                                    print(regra)
-                                    pass
+                            for split in range(end - 1):
+                                for variavel in variaveis:
+                                    #print(f'variavel = {variavel}')
+                                    for regra in regras_de_substituicao[variavel]:
+                                        #print(f'regra = {regra}')
+                                        for terminal in terminais:
+                                            if terminal not in regra:
+                                                if len(regra) == 2:
+                                                    #print(f'1a variavel = {regra[0]}')
+                                                    #print(f'2a variavel = {regra[1]}')
+                                                    if (regra[0] in tabela[start][split]) and (regra[1] in tabela[split + 1][end]):
+                                                        tabela[start][end].append(variavel)
+
+                                                    break
                     
-                    print(tabela)
+                    self.print_tabela(tabela)
 
-
+                    if variavel_inicial in tabela[0][tam_cadeia - 1]:
+                        print('cadeia aceita')
+                    else:
+                        print('cadeia nao aceita')
 
             index_especs += qtd_regras + 3                                                                          # Atualizando indice
             index_variaveis += qtd_regras + 3                                                                       # Atualizando indice
@@ -149,4 +175,4 @@ class CYK:
             
 
 # Testes
-print(CYK().algoritmo_cyk())
+CYK().algoritmo_cyk()
