@@ -90,6 +90,8 @@ class CYK:
 
         qtd_glcs = int(self.gramaticas[0])                                                                          # Quantidade de GLCs
 
+        resultados = {glc: [] for glc in range(qtd_glcs)}                                                           # Dict responsavel por armazenar os resultados do algoritmo
+
         for glc in range(qtd_glcs):
             qtd_variaveis, qtd_terminais, qtd_regras = map(int, self.gramaticas[index_especs].split())              # Especificacoes das GLCs
             
@@ -120,7 +122,7 @@ class CYK:
 
                 cadeia = self.cadeias[index_cadeias].split()                                                        # Lista contendo os simbolos da cadeia
                 tam_cadeia = len(cadeia)
-                print(f'\ncadeia: {cadeia}')
+                print(f'\ncadeia: {cadeia}\n')
 
                 """
                 Validando se o teste eh a cadeia vazia, alem de checar
@@ -129,8 +131,10 @@ class CYK:
 
                 if ('&' in cadeia) and (tam_cadeia == 1):
                     if (self.busca(regras=regras_de_substituicao, simbolo='&')):
+                        resultados[glc].append(1)
                         print('cadeia aceita')
                     else:
+                        resultados[glc].append(0)
                         print('cadeia nao aceita')
 
                 else:
@@ -142,29 +146,38 @@ class CYK:
                                 tabela[i][i].append(variavel)
 
                     for tam_substring in range(2, tam_cadeia + 1):
+                        #print(f'Tamanho da Substring: {tam_substring}')
+
                         for start in range(tam_cadeia - tam_substring + 1):
                             end = start + tam_substring - 1
                             
-                            for split in range(end - 1):
+                            #print(f'Posicao inicial da Substring: {start}')
+                            #print(f'Posicao final da Substring: {end}')
+
+                            for split in range(end):
+                                #print(f'Posicao de Split: {split}')
+
                                 for variavel in variaveis:
-                                    #print(f'variavel = {variavel}')
                                     for regra in regras_de_substituicao[variavel]:
-                                        #print(f'regra = {regra}')
                                         for terminal in terminais:
                                             if terminal not in regra:
                                                 if len(regra) == 2:
-                                                    #print(f'1a variavel = {regra[0]}')
-                                                    #print(f'2a variavel = {regra[1]}')
+                                                    #print(f'Regra: {regra}')
+
                                                     if (regra[0] in tabela[start][split]) and (regra[1] in tabela[split + 1][end]):
+                                                        #print(f'Apendando Variavel {variavel} em t({start}, {end})')
                                                         tabela[start][end].append(variavel)
 
+                                                    #print()
                                                     break
                     
                     self.print_tabela(tabela)
 
                     if variavel_inicial in tabela[0][tam_cadeia - 1]:
+                        resultados[glc].append(1)
                         print('cadeia aceita')
                     else:
+                        resultados[glc].append(0)
                         print('cadeia nao aceita')
 
             index_especs += qtd_regras + 3                                                                          # Atualizando indice
@@ -173,6 +186,8 @@ class CYK:
             index_regras += qtd_regras + 3                                                                          # Atualizando indice
             index_cadeias += 1                                                                                      # Atualizando indice
             
+        return resultados 
+
 
 # Testes
-CYK().algoritmo_cyk()
+print(CYK().algoritmo_cyk())
