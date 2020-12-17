@@ -1,4 +1,6 @@
 """
+Gabriel Bispo Abacherly - 10284420
+
 Classe responsável pela leitura dos arquivos de entrada:
 Definicao das GLCs e das cadeias de teste
 """
@@ -10,10 +12,10 @@ class FileReader:
     """
 
     def __init__(self):
-        with open('./files/inp-glc.txt', 'r') as reader:
+        with open('inp-glc.txt', 'r') as reader:
             self.__glcs = reader.readlines()
 
-        with open('./files/inp-cadeias.txt', 'r') as reader:
+        with open('inp-cadeias.txt', 'r') as reader:
             self.__cadeias = reader.readlines()
 
     """

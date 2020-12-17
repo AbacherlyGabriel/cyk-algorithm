@@ -1,3 +1,7 @@
+"""
+Gabriel Bispo Abacherly - 10284420
+"""
+
 from Input import FileReader
 
 
@@ -187,7 +191,3 @@ class CYK:
             index_cadeias += 1                                                                                      # Atualizando indice
             
         return resultados 
-
-
-# Testes
-print(CYK().algoritmo_cyk())
