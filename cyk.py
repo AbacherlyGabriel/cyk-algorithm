@@ -24,52 +24,56 @@ class CYK:
     """
 
     def regras_to_dict(self, variaveis, regras):
-        regras_de_substituicao = {variavel: [] for variavel in variaveis}
+        regras_de_substituicao = {variavel: [] for variavel in variaveis}                                           # Inicializando dicionario
 
         for regra in regras:
-            regra_lista = regra.split()
+            regra_lista = regra.split()                                                                             # Split da string que contem a regra
 
-            variavel = regra_lista[0]
-            substituicoes = regra_lista[2:]
+            variavel = regra_lista[0]                                                                               # Definicao da variavel
+            substituicoes = regra_lista[2:]                                                                         # Definicao da subtituicao
             
-            regras_de_substituicao[variavel].append(substituicoes)
+            regras_de_substituicao[variavel].append(substituicoes)                                                  # Adicionando regra ao dicionario
 
-        variavel_inicial = list(regras_de_substituicao.keys())[0]
+        variavel_inicial = list(regras_de_substituicao.keys())[0]                                                   # Obtendo a variavel inicial
 
-        return regras_de_substituicao, variavel_inicial
+        return regras_de_substituicao, variavel_inicial                                                             # Retorando dict e a variavel inicial
 
     """
     Inicializacao da tabela de resultados dado o tamanho da cadeia de teste
     """
 
     def criar_tabela(self, tam_cadeia):
-        tabela = []
+        tabela = []                                                                                                 # Instanciando a tabela
 
         for i in range(tam_cadeia):
-            tabela.append([])
+            tabela.append([])                                                                                       # Adicionando linhas
 
             for j in range(tam_cadeia):
-                tabela[i].append([])
+                tabela[i].append([])                                                                                # Adicionando colunas
 
-        return tabela
+        return tabela                                                                                               # Retornando tabela inicializada
 
     """
     Busca por regras especificadas no parametro da funcao
+
+    As buscas podem ser por regras de uma determinada variavel
+    (se o parametro "variavel" nao for nulo) ou 
+    por todas as substituicoes da GLC (se o parametro "variavel" for nulo)
     """
 
     def busca(self, regras=None, variavel=None, simbolo=None):
-        if (regras is not None) and (simbolo is not None):
-            substituicoes = regras.values()
+        if (regras is not None) and (simbolo is not None):                                                          # Validando o tipo de busca
+            substituicoes = regras.values()                                                                         # Obtendo a lista de regras
             
             if (variavel is not None):
-                substituicoes = regras[variavel]
+                substituicoes = regras[variavel]                                                                    # Obtendo a lista de regras dada uma variavel
 
-            for lista_substituicoes in substituicoes:
+            for lista_substituicoes in substituicoes:                                                               # Busca pelo simbolo especificado nos parametros da funcao
                 for substituicao in lista_substituicoes:
                     if simbolo in substituicao:
-                        return True
+                        return True                                                                                 # Retornnando True, se o simbolo foi encontrado
 
-        return False
+        return False                                                                                                # Retornando False, caso contrario
 
     """
     Exibindo tabela
@@ -107,15 +111,6 @@ class CYK:
 
             qtd_cadeias = int(self.cadeias[index_cadeias])                                                          # Quantidade de cadeias de teste
 
-            print(f'\nglc {glc}')
-            print(f'qtd variaveis: {qtd_variaveis}')
-            print(f'qtd terminais: {qtd_terminais}')
-            print(f'qtd regras: {qtd_regras}')
-            print(f'\nvariaveis: {variaveis}')
-            print(f'terminais: {terminais}')
-            print(f'regras: {regras_de_substituicao}')
-            print(f'variavel inicial: {variavel_inicial}')
-
             """
             Leitura das cadeias de teste e execucao do algoritmo
             """
@@ -125,8 +120,7 @@ class CYK:
                 qtd_cadeias -= 1                                                                                    # Atualizando quantidade de cadeias
 
                 cadeia = self.cadeias[index_cadeias].split()                                                        # Lista contendo os simbolos da cadeia
-                tam_cadeia = len(cadeia)
-                print(f'\ncadeia: {cadeia}\n')
+                tam_cadeia = len(cadeia)                                                                            # Armazendo o tamanho da cadeia
 
                 """
                 Validando se o teste eh a cadeia vazia, alem de checar
@@ -134,55 +128,48 @@ class CYK:
                 """
 
                 if ('&' in cadeia) and (tam_cadeia == 1):
-                    if (self.busca(regras=regras_de_substituicao, simbolo='&')):
-                        resultados[glc].append(1)
-                        print('cadeia aceita')
+                    if (self.busca(regras=regras_de_substituicao, simbolo='&')):                                    # Busca por regras contendo a cadeia vazia
+                        resultados[glc].append(1)                                                                   # Cadeia aceita
                     else:
-                        resultados[glc].append(0)
-                        print('cadeia nao aceita')
+                        resultados[glc].append(0)                                                                   # Cadeia rejeitada
 
                 else:
-                    tabela = self.criar_tabela(tam_cadeia)                                                         # Tabela contendo os resultados do algoritmo
+                    tabela = self.criar_tabela(tam_cadeia)                                                          # Tabela contendo os resultados do algoritmo
+
+                    """
+                    Analisando subcadeias de tamanho 1
+                    """
 
                     for i in range(tam_cadeia):
                         for variavel in variaveis:
                             if (self.busca(regras_de_substituicao, variavel, cadeia[i])):
                                 tabela[i][i].append(variavel)
 
-                    for tam_substring in range(2, tam_cadeia + 1):
-                        #print(f'Tamanho da Substring: {tam_substring}')
+                    """
+                    Analisando subcadeias dos demais tamanhos
+                    """
 
+                    for tam_substring in range(2, tam_cadeia + 1):
                         for start in range(tam_cadeia - tam_substring + 1):
                             end = start + tam_substring - 1
-                            
-                            #print(f'Posicao inicial da Substring: {start}')
-                            #print(f'Posicao final da Substring: {end}')
 
                             for split in range(end):
-                                #print(f'Posicao de Split: {split}')
-
                                 for variavel in variaveis:
                                     for regra in regras_de_substituicao[variavel]:
                                         for terminal in terminais:
                                             if terminal not in regra:
                                                 if len(regra) == 2:
-                                                    #print(f'Regra: {regra}')
-
                                                     if (regra[0] in tabela[start][split]) and (regra[1] in tabela[split + 1][end]):
-                                                        #print(f'Apendando Variavel {variavel} em t({start}, {end})')
                                                         tabela[start][end].append(variavel)
 
-                                                    #print()
                                                     break
                     
                     self.print_tabela(tabela)
 
                     if variavel_inicial in tabela[0][tam_cadeia - 1]:
                         resultados[glc].append(1)
-                        print('cadeia aceita')
                     else:
                         resultados[glc].append(0)
-                        print('cadeia nao aceita')
 
             index_especs += qtd_regras + 3                                                                          # Atualizando indice
             index_variaveis += qtd_regras + 3                                                                       # Atualizando indice
