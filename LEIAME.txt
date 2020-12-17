@@ -1,0 +1,7 @@
+- Versão do Compilador: Python 3.8.2
+
+- IDE Utilizada: Visual Studio Code (1.52.1)
+
+- Sistema Operacional: Windows 10
+
+- Comando de Execução: "py glc.py" ou "python glc.py"
