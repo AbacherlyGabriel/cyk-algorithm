@@ -74,16 +74,6 @@ class CYK:
                         return True                                                                                 # Retornnando True, se o simbolo foi encontrado
 
         return False                                                                                                # Retornando False, caso contrario
-
-    """
-    Exibindo tabela
-    """
-
-    def print_tabela(self, tabela):
-        for row in range(len(tabela)):
-            for col in range(len(tabela[row])):
-                print(tabela[row][col], end=' ')
-            print()
         
     """
     Implementacao do Algoritmo CYK
@@ -137,7 +127,12 @@ class CYK:
                     tabela = self.criar_tabela(tam_cadeia)                                                          # Tabela contendo os resultados do algoritmo
 
                     """
-                    Analisando subcadeias de tamanho 1
+                    Analisando subcadeias de tamanho 1:
+
+                    Busca, para cada variavel, por regras do tipo A => b,
+                    onde b eh uma subcadeia de tamanho 1
+
+                    Se a regra for encontrada, adiciona-se A em tabela(i, i)  
                     """
 
                     for i in range(tam_cadeia):
@@ -149,11 +144,21 @@ class CYK:
                     Analisando subcadeias dos demais tamanhos
                     """
 
-                    for tam_substring in range(2, tam_cadeia + 1):
-                        for start in range(tam_cadeia - tam_substring + 1):
-                            end = start + tam_substring - 1
+                    for tam_substring in range(2, tam_cadeia + 1):                                                  # Definicao do tamanho da subcadeia                                                                            
+                        for start in range(tam_cadeia - tam_substring + 1):                                         # Definicao da posicao inicial da subcadeia
+                            end = start + tam_substring - 1                                                         # Definicao da posicao final da subcadeia
 
-                            for split in range(end):
+                            for split in range(end):                                                                # Posicao de quebra da subcadeia
+                                
+                                """
+                                Para cada variavel, busca-se por regras do tipo A => BC
+
+                                Ao encontra-las, verifica-se se tabela(start, split) contem B e
+                                se tabela(split + 1, end) possui C.
+
+                                Em casos positivos, A eh adicionada a tabela(start, end)
+                                """
+
                                 for variavel in variaveis:
                                     for regra in regras_de_substituicao[variavel]:
                                         for terminal in terminais:
@@ -163,13 +168,16 @@ class CYK:
                                                         tabela[start][end].append(variavel)
 
                                                     break
-                    
-                    self.print_tabela(tabela)
+
+                    """
+                    Validando se, apos a construcao da tabela, a variavel inicial
+                    encontra-se em tabela(1, n), onde n representa o tamanho da cadeia de teste
+                    """
 
                     if variavel_inicial in tabela[0][tam_cadeia - 1]:
-                        resultados[glc].append(1)
+                        resultados[glc].append(1)                                                                   # Cadeia aceita
                     else:
-                        resultados[glc].append(0)
+                        resultados[glc].append(0)                                                                   # Cadeia rejeitada
 
             index_especs += qtd_regras + 3                                                                          # Atualizando indice
             index_variaveis += qtd_regras + 3                                                                       # Atualizando indice
@@ -177,4 +185,4 @@ class CYK:
             index_regras += qtd_regras + 3                                                                          # Atualizando indice
             index_cadeias += 1                                                                                      # Atualizando indice
             
-        return resultados 
+        return resultados                                                                                           # Retornando resultados

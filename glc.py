@@ -6,7 +6,8 @@ from cyk import CYK
 
 
 """
-Funcao responsavel por realizar a formatacao dos resultados do algoritmo
+Funcao responsavel por realizar a formatacao dos 
+resultados do algoritmo no arquivo out-status.txt
 """
 
 def main():
